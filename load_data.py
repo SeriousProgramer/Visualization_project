@@ -17,6 +17,8 @@ def count_freq_and_describe():
 
 def findMissing():
     for column in df.columns:
+     num_empty = (df[column] == '').sum()
+     print(num_empty, "empty cells in column", column)
      print(df[column].isna().sum())
 
 findMissing()
