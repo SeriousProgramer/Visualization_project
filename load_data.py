@@ -1,7 +1,7 @@
 import pandas as pd
 
 #replace <path on you computer to file, e.g. C:\....> with the path to the file 
-df = pd.read_csv('C:\\Users\\20221498\\Desktop\\Visualization\\all_data.csv',delimiter=';', on_bad_lines='skip')
+df = pd.read_csv("C:\\Users\\20221051\\Downloads\\all_data.csv",delimiter=';', on_bad_lines='skip')
 print(df)
 
 def cell_value():
@@ -9,5 +9,4 @@ def cell_value():
 
 print(cell_value())
 print(df.columns)
-df = df.drop(['Credit_Score'], axis=1)
-
+df.head()
