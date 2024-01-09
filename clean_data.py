@@ -29,7 +29,7 @@ def isValidItem(value, column):
         return (isinstance(value, float) and (value is not None)) 
     elif(column == 'Payment_Behaviour'):
         # Occasionally NaN
-        return (isinstance(value, float) and (value is not None)) 
+        return (isinstance(value, str) and (value is not None)) and value != "!@9#%8" 
     elif(column == 'Interest_Rate'):
         # Occasionally there's unrealistic numbers that change month-to-month (negative or > 1000)
         # WARNING: I'm not 100% sure these values are erroneous
@@ -132,14 +132,34 @@ def getCleanedInRange(df, r):
 
 
 
-df = pd.read_csv("C:\\Users\\20221051\\Downloads\\all_data.csv", delimiter=';', on_bad_lines='skip')
+df = pd.read_csv(
+    "C:\\Users\\20221498\\Downloads\\all_data.csv", delimiter=";", on_bad_lines="skip"
+)
 
+id_counts = df["Customer_ID"].value_counts()
+
+# Get a boolean Series where True represents rows where the 'Customer_ID' occurs exactly 12 times
+mask = id_counts == 12 
+
+# Get the IDs that occur exactly 12 times
+ids_to_select = id_counts[mask].index
+
+# If more than 500 IDs are found, select only the first 500
+if len(ids_to_select) > 500:
+    ids_to_select = ids_to_select[:500]
+
+# Create a new DataFrame with the customers whose IDs occur exactly 12 times
+test_df = df[df["Customer_ID"].isin(ids_to_select)].copy()
 #answer = input("Enter the number of names to clean")
 
 selected = ['Name', 'Credit_Score']
 
 print(df.columns)
 
-cleaned = getCleanedInRange(df, 50)
+num_rows, num_cols = test_df.shape
 
+print(f"The DataFrame has {num_rows} rows and {num_cols} columns.")
 
+cleaned = getCleanedInRange(test_df, num_rows)
+cleaned.to_excel('C:\\Users\\20221498\\Desktop\\cleaned_data.xlsx', index=False)
+print(cleaned.head(50))
