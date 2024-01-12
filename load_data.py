@@ -12,19 +12,49 @@ df = pd.read_csv(
 )
 dfs = df.head(50)
 
-fig = px.scatter(dfs, x='Month', y='Num_of_Delayed_Payment', title='Scatter plot of Number of Delayed Payments over Month')
+def get_top_correlations(df, columns, target_column, n=6):
+    # Select only the specified columns
+    df = df[columns].copy()
 
-# Create a Dash application
-app = dash.Dash(__name__)
+    # Remove commas and convert to floats
+    for column in columns:
+        if df[column].dtypes == 'object':
+            df.loc[:, column] = pd.to_numeric(df[column].str.replace(',', ''), errors='coerce')
 
-# Define the layout
-app.layout = html.Div([
-    dcc.Graph(figure=fig)
-])
+    # Check if the target column exists in the DataFrame
+    if target_column not in df.columns:
+        raise ValueError(f"Column '{target_column}' does not exist in the DataFrame.")
 
-# Run the Dash app
-if __name__ == '__main__':
-    app.run_server(debug=True)
+    # Calculate the correlation matrix
+    corr_matrix = df.corr()
+
+    # Get the correlations with the target column
+    correlations = corr_matrix[target_column]
+
+    # Get the absolute values of the correlations
+    abs_correlations = correlations.abs()
+
+    # Sort the correlations by their absolute values in descending order
+    sorted_correlations = abs_correlations.sort_values(ascending=False)
+
+    # Exclude the correlation of the target column with itself
+    sorted_correlations = sorted_correlations.drop(target_column)
+
+    # Get the top n correlations
+    top_correlations = sorted_correlations.head(n)
+
+    return top_correlations
+
+# Specify the columns to include in the correlation analysis
+columns = ['Num_of_Loan', 'Monthly_Balance', 'Amount_invested_monthly', 'Total_EMI_per_month', 'Credit_Utilization_Ratio', 'Outstanding_Debt', 'Num_Credit_Inquiries', 'Changed_Credit_Limit', 'Num_of_Delayed_Payment', 'Delay_from_due_date', 'Interest_Rate', 'Num_Credit_Card', 'Num_Bank_Accounts', 'Annual_Income']
+
+# Use the function to get the top 6 correlations with 'Num_of_loans'
+top_correlations = get_top_correlations(df, columns, 'Num_of_Loan', 6)
+print(top_correlations)
+
+print(dfs)
+
+
 
 
 
