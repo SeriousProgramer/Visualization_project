@@ -18,8 +18,14 @@ def get_top_correlations(df, columns, target_column, n=6):
 
     # Remove commas and convert to floats
     for column in columns:
+       
         if df[column].dtypes == 'object':
             df.loc[:, column] = pd.to_numeric(df[column].str.replace(',', ''), errors='coerce')
+       
+
+
+# Remove outliers
+        
 
     # Check if the target column exists in the DataFrame
     if target_column not in df.columns:
@@ -51,6 +57,46 @@ columns = ['Num_of_Loan', 'Monthly_Balance', 'Amount_invested_monthly', 'Total_E
 # Use the function to get the top 6 correlations with 'Num_of_loans'
 top_correlations = get_top_correlations(df, columns, 'Num_of_Loan', 6)
 print(top_correlations)
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+import plotly.graph_objects as go
+
+# Create a Dash app
+app = dash.Dash(__name__)
+
+# Get the values of the first person in the database
+first_person_values = df.loc[1, top_correlations.index]
+
+# Convert the values to a numeric type
+first_person_values = pd.to_numeric(first_person_values, errors='coerce')
+
+Q1 = df['Monthly_Balance'].astype(int).quantile(0.25)
+Q3 = df['Monthly_Balance'].astype(int).quantile(0.75)
+IQR = Q3 - Q1
+
+# Define the range [Q1 - 1.5*IQR, Q3 + 1.5*IQR]
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+
+# Remove outliers
+dfs = df[(df['Monthly_Balance'] >= lower_bound) & (df['Monthly_Balance'] <= upper_bound)]
+# Create a radar plot
+fig = go.Figure(data=go.Scatter(x=df['Num_of_Loan'], y=dfs, mode='markers'))
+
+
+
+# Add the plot to the app
+app.layout = html.Div([
+    dcc.Graph(figure=fig)
+])
+
+# Run the app
+if __name__ == '__main__':
+    app.run_server(debug=True)
+
+
+
 
 print(dfs)
 
