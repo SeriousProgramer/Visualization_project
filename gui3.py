@@ -9,6 +9,11 @@ df = pd.read_csv(
     on_bad_lines="skip",
 )
 
+def string_to_float(dataframe):
+    # Replace every comma with a decimal point and convert to float
+    dataframe = dataframe.apply(lambda x: x.str.replace(',', '.').astype(float) if x.dtype == 'object' else x)
+    return dataframe
+
 # Optional: Clean/Filter the dataset for outliers if necessary
 # For instance, you might want to remove rows where 'Num_of_Loan' or 'Num_Bank_Accounts' are extremely high
 
@@ -16,25 +21,17 @@ df = pd.read_csv(
 def create_scatter_plot(dataframe, credit_mix=None):
     # dataframe = dataframe[dataframe['Num_of_Loan'] < 20]
     # dataframe = dataframe[dataframe['Num_Bank_Accounts'] < 20]
-    dataframe = dataframe[dataframe['Interest_Rate'] < 20]
-
-    if credit_mix:
-        dataframe = dataframe[dataframe['Credit_Mix'] == credit_mix]
-    fig = px.scatter(dataframe, y='Annual_Income', x='Interest_Rate', color='Month', custom_data=(['Name','Month']))
+    
+    # if credit_mix:
+    #     dataframe = dataframe[dataframe['Credit_Mix'] == credit_mix]
+    fig = px.scatter(dataframe, x='Outstanding_Debt', y='Num_of_Loan', color='Month', custom_data=(['Name','Month']))
     return fig
 
 # Initialize Dash app
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+app = Dash(__name__)
 
-# Initialize Dash app with external stylesheets
-app = Dash(__name__, external_stylesheets=external_stylesheets)
 # Define app layout
 app.layout = html.Div([
-     dcc.Checkbox(
-        id='theme-switch',
-        label='Switch to Dark Mode',
-        value=False
-    ),
     dcc.Dropdown(
         id='credit-mix-dropdown',
         options=[{'label': i, 'value': i} for i in df['Credit_Mix'].unique()],
@@ -89,14 +86,3 @@ def display_click_data(clickData, selected_credit_mix):
 # Run the app
 if __name__ == '__main__':
     app.run_server(debug=True)
-    
-# Define callback to update CSS
-@app.callback(
-    Output('app-css', 'href'),
-    Input('theme-switch', 'value')
-)
-def update_css(theme_switch):
-    if theme_switch:
-        return 'https://codepen.io/chriddyp/pen/brPBPO.css'  # Dark theme
-    else:
-        return 'https://codepen.io/chriddyp/pen/bWLwgP.css'  # Light theme
