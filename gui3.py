@@ -9,6 +9,10 @@ df = pd.read_csv(
     on_bad_lines="skip",
 )
 
+def create_violin_plot(dataframe):
+    fig = px.violin(dataframe, y='Num_of_Loan', x='Credit_Score', box=True, points='all', hover_data=df.columns)
+    return fig
+
 def string_to_float(dataframe):
     # Replace every comma with a decimal point and convert to float
     dataframe = dataframe.apply(lambda x: x.str.replace(',', '.').astype(float) if x.dtype == 'object' else x)
@@ -19,12 +23,13 @@ def string_to_float(dataframe):
 
 # Create a scatter plot
 def create_scatter_plot(dataframe, credit_mix=None):
-    # dataframe = dataframe[dataframe['Num_of_Loan'] < 20]
+    dataframe = dataframe[dataframe['Num_of_Loan'] < 20]
     # dataframe = dataframe[dataframe['Num_Bank_Accounts'] < 20]
-    
-    # if credit_mix:
-    #     dataframe = dataframe[dataframe['Credit_Mix'] == credit_mix]
-    fig = px.scatter(dataframe, x='Outstanding_Debt', y='Num_of_Loan', color='Month', custom_data=(['Name','Month']))
+    dataframe = dataframe[dataframe['Num_of_Loan'] > -1]
+
+    if credit_mix:
+        dataframe = dataframe[dataframe['Credit_Mix'] == credit_mix]
+    fig = px.scatter(dataframe, x='Outstanding_Debt', y='Changed_Credit_Limit', color='Credit_Score', custom_data=(['Name','Month']))
     return fig
 
 # Initialize Dash app
@@ -47,7 +52,7 @@ app.layout = html.Div([
     [Input('credit-mix-dropdown', 'value')]
 )
 def update_scatter_plot(selected_credit_mix):
-    return create_scatter_plot(df, credit_mix=selected_credit_mix)
+    return create_violin_plot(df)
 
 # Define callback to update bar chart based on click event
 @app.callback(
@@ -57,7 +62,6 @@ def update_scatter_plot(selected_credit_mix):
 )
 def display_click_data(clickData, selected_credit_mix):
     # Default empty bar chart
-    fig = px.bar()
 
     # Check if a point in the scatter plot was clicked
        # Check if a point in the scatter plot was clicked
@@ -79,7 +83,7 @@ def display_click_data(clickData, selected_credit_mix):
         filtered_df = filtered_df.drop('Month_Order', axis=1)
 
         # Create bar chart showing user's progress
-        fig = px.bar(filtered_df, x='Month', y='Num_of_Delayed_Payment', title=f"Credit Limit Change Over Time for {name}")
+        fig = px.histogram(filtered_df, x='Month', y='Total_EMI_per_month', title=f"Credit Limit Change Over Time for {name}")
 
     return fig
 
