@@ -31,8 +31,11 @@ TASKS = {
     'Understanding Income': Task2(),
 }
 
-df = pd.read_csv("C:\\Users\\yashs\\Downloads\\cleaned_data.csv")
-
+df = pd.read_csv(
+    "C:\\Users\\20221498\\Desktop\\Visualization\\cleaned_data.csv",
+    delimiter=";",
+    on_bad_lines="skip",
+)
 # Initialize the Dash app.
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
 
@@ -43,13 +46,13 @@ app.layout = html.Div([
     dcc.Dropdown(
         id='task-selector',
         options=[{'label': key, 'value': key} for key in TASKS.keys()],
-        value='Task 1'
+        value='Task 2'
     ),
     html.Div(id='task-content')  # Placeholder for the task layout
 ])
 
-Task1.register_callbacks(app)
-#Task2.register_callbacks(app)
+# Task1.register_callbacks(app)
+Task2.register_callbacks(app)
 
 @app.callback(
     Output('task-content', 'children'),
