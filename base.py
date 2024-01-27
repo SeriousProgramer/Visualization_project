@@ -18,7 +18,7 @@
 
 
 
-
+import pandas as pd
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
@@ -27,53 +27,41 @@ from task2 import Task2
 
 # Define a dictionary to map task options to their corresponding Task implementations
 TASKS = {
-    'OPT1': Task1(),
-    'OPT2': Task2(),
+    'Understanding Credit Score': Task1(),
+    'Understanding Income': Task2(),
 }
 
+df = pd.read_csv("C:\\Users\\yashs\\Downloads\\cleaned_data.csv")
+
 # Initialize the Dash app.
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, suppress_callback_exceptions=True)
+
+# ... [rest of your app's code] ...
 
 # Define the layout of the app.
 app.layout = html.Div([
-    dcc.Checklist(
-        id='theme-switch',
-        options=[{'label': 'Switch to Dark Mode', 'value': 'DARK'}],
-        value=[]
-    ),    
-    html.Div([
-        dcc.Dropdown(
-            id='plot-selector',
-            options=[{'label': key, 'value': key} for key in TASKS.keys()],
-            value='OPT1'  # Default value
-        )
-    ], style={'width': '100%', 'display': 'inline-block', 'padding': '20px'}),
-    html.Div([
-        dcc.Graph(id='plot-area')
-    ], style={'width': '100%', 'display': 'inline-block', 'padding': '20px'}),
-    html.Link(id='theme-link', rel='stylesheet', href='https://codepen.io/chriddyp/pen/brPBPO.css')
+    dcc.Dropdown(
+        id='task-selector',
+        options=[{'label': key, 'value': key} for key in TASKS.keys()],
+        value='Task 1'
+    ),
+    html.Div(id='task-content')  # Placeholder for the task layout
 ])
 
-# Callback to update the plot area based on the selected task
-@app.callback(
-    Output('plot-area', 'figure'),
-    [Input('plot-selector', 'value')]
-)
-def update_plot(selected_task_key):
-    # Get the plot from the selected task
-    task = TASKS.get(selected_task_key)
-    return task.get_plot() if task else {}
+Task1.register_callbacks(app)
+#Task2.register_callbacks(app)
 
-# Callback to switch themes
 @app.callback(
-    Output('theme-link', 'href'),
-    [Input('theme-switch', 'checked')]
+    Output('task-content', 'children'),
+    [Input('task-selector', 'value')]
 )
-def update_theme(checked):
-    if checked:
-        return 'https://codepen.io/chriddyp/pen/brPBPO.css'  # Dark theme URL
+def switch_task(selected_task):
+    task = TASKS.get(selected_task)
+    if task:
+        return task.layout()
     else:
-        return 'https://codepen.io/chriddyp/pen/bWLwgP.css'  # Light theme URL
+        return "Please select a task"
+
 
 # Run the app.
 if __name__ == '__main__':
