@@ -48,7 +48,7 @@ app.layout = html.Div([
     html.Div(id='task-content')  # Placeholder for the task layout
 ])
 
-Task1.register_callbacks(app)
+Task1.register_callbacks(app, df)
 #Task2.register_callbacks(app)
 
 @app.callback(
@@ -58,7 +58,7 @@ Task1.register_callbacks(app)
 def switch_task(selected_task):
     task = TASKS.get(selected_task)
     if task:
-        return task.layout()
+        return task.layout(df)
     else:
         return "Please select a task"
 

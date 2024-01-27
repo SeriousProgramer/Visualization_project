@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 class Task(ABC):
     @abstractmethod
-    def get_plot(self, any):
+    def layout(self, any):
         pass
 
 # #Callback to update the plot area based on the selected task

@@ -5,16 +5,16 @@ import pandas as pd
 
 class Task1:
     @staticmethod
-    def layout():
+    def layout(df):
         # Example layout for Task 1
         return html.Div([
                 html.H3("Task 1 Visualization"),
                 html.Div([
                     dcc.Dropdown(
                     id='attribute-selector',
-                    options=[{'label': 'box-plot', 'value': 'box'}, {'label' : 'pi', 'value': 'pi'}],
-                    value='box-plot'),
-                    dcc.Graph(id = 'main-plot', figure = Task1.create_box_plot()),
+                    options=[{'label': 'monies', 'value': 'Annual_Income'}, {'label' : 'Number of delayed payments', 'value': 'Num_of_Delayed_Payment'}],
+                    value='Num_of_Loan'),
+                    dcc.Graph(id = 'main-plot', figure = Task1.create_box_plot(df, 'Num_of_Loan')),
                     html.Div(id = "left-panel")], style={'width': '60%', 'display': 'inline-block'}),
                 html.Div([
                         html.Div([
@@ -24,24 +24,38 @@ class Task1:
                             ),html.Div(id='credit_info')
                             ]),
                         html.Div([
-                            dcc.Graph(id='side-plot-2', figure = Task1.create_box_plot()
+                            dcc.Graph(id='side-plot-2', figure = Task1.create_pi_chart(df)
                             ), html.Div(id='pie_chart') 
                     ]),
                     html.Div(id='right-panel')],style={'width': '40%', 'display': 'inline-block', 'vertical-align': 'top'})]
             )
             
     @staticmethod
-    def create_box_plot():
-        df = pd.DataFrame({
-            'data_column': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 5, 6, 7, 8]
-        })
-        fig = go.Figure(data=[go.Box(y=df['data_column'], boxpoints='all', jitter=0.3, pointpos=-1.8)])
-        fig.update_layout(title='Box Plot Example', yaxis=dict(title='Values'), xaxis=dict(title='Data Column'))
+    def create_box_plot(df, value):        
+        # Group entries by person
+        grouped = df.groupby(by=['Customer_ID'])
+        
+        # Order Credit Score properly
+        # credit_order = ["Poor", "Standard", "Good"]
+        # grouped['Credit_Score'] = pd.Categorical(grouped['Credit_Score'], credit_order, ordered=True)
+        
+        
+        # Create a box plot with 'data_column' on the x-axis
+        fig = go.Figure(data=[go.Box(y = grouped[value].apply(pd.Series.mode), x = grouped['Credit_Score'].apply(pd.Series.mode), boxpoints=False, pointpos=-1.8, quartilemethod = 'exclusive')])
+
+        # Customize the layout
+        fig.update_layout(
+            title='Box Plot',
+            yaxis=dict(title=value),
+            xaxis=dict(title='Credit_Score')
+             # Adjust the width of the whiskers
+        )
+        fig.update_traces(quartilemethod="exclusive")
         return fig
         #return go.Figure(data=[go.Box(y = self.df[str], boxpoints='all', jitter=0.3, pointpos=-1.8)])
            
     @staticmethod
-    def create_pi_chart():
+    def create_pi_chart(df):
         labels = ['Category A', 'Category B', 'Category C', 'Category D']
         values = [450, 300, 150, 100]
         fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
@@ -51,13 +65,10 @@ class Task1:
 
 
     @staticmethod
-    def register_callbacks(app):
+    def register_callbacks(app, df):
         @app.callback(
             Output('main-plot', 'figure'),
             [Input('attribute-selector', 'value')]
         )
         def update_output(new_attribute):
-            if new_attribute == 'pi':
-                return Task1.create_pi_chart()
-            else:
-                return Task1.create_box_plot()
+            return Task1.create_box_plot(df, new_attribute)
