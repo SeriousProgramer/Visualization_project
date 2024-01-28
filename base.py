@@ -51,8 +51,8 @@ app.layout = html.Div([
     html.Div(id='task-content')  # Placeholder for the task layout
 ])
 
-Task1.register_callbacks(app, df)
-#Task2.register_callbacks(app)
+#Task1.register_callbacks(app, df)
+Task2.register_callbacks(app,df)
 
 @app.callback(
     Output('task-content', 'children'),
