@@ -1,5 +1,6 @@
+# from sre_parse import State
 from dash import html, dcc
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
 import numpy as np
 import pandas as pd
@@ -100,7 +101,7 @@ class Task2:
 
         # Get the range for the clicked bin
         clicked_range = bin_edges[bin_index:bin_index+2]
-        categories = ['Annual_Income', 'Monthly_Inhand_Salary', 'Num_Bank_Accounts', 'Num_Credit_Card', 'Interest_Rate', 'Num_of_Loan']
+        categories = ['Age', 'Num_of_Delayed_Payment', 'Num_Bank_Accounts', 'Num_Credit_Card', 'Interest_Rate', 'Num_of_Loan']
 
         # Filter the DataFrame for the selected range and calculate medians
         selected_df = df[(df['Monthly_Inhand_Salary'] >= clicked_range[0]) & (df['Monthly_Inhand_Salary'] <= clicked_range[1]) & (df['Credit_Score'] == credit_score)]
@@ -149,6 +150,7 @@ class Task2:
                 selected_credit_score = credit_score_mapping.get(credit_score, 'Poor')  # Default to 'Poor' if not found
                 return Task2.create_radar_chart(df, clicked_bin,selected_credit_score)
             return go.Figure()
+      
 
 # Additional code for Dash app initialization and running may go below this line
 # ...
