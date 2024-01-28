@@ -29,13 +29,13 @@ class Task2:
    
 
     @staticmethod
-    def layout():
+    def layout(df):
         return html.Div([
             html.H3("Task 2 Visualization"),
             html.Div([
                 dcc.Graph(
                     id="main-plot",
-                    figure=Task2.create_stacked_histogram(),
+                    figure=Task2.create_stacked_histogram(df),
                     # Enable relayoutData to track changes in layout
                     config={"editable": True, "edits": {"axisTitleText": True}}
                 ),
@@ -44,12 +44,12 @@ class Task2:
         ])
 
     @staticmethod
-    def create_stacked_histogram(x_range=None):
-        df = pd.read_csv(
-            "C:\\Users\\20221498\\Desktop\\Visualization\\cleaned_data.csv",
-            delimiter=";",
-            on_bad_lines="skip",
-        )
+    def create_stacked_histogram(df, x_range=None):
+        # df = pd.read_csv(
+        #     "C:\\Users\\20221498\\Desktop\\Visualization\\cleaned_data.csv",
+        #     delimiter=";",
+        #     on_bad_lines="skip",
+        # )
         
         fig = go.Figure()
 
@@ -104,7 +104,7 @@ class Task2:
         # return go.Figure(data=[go.Box(y = self.df[str], boxpoints='all', jitter=0.3, pointpos=-1.8)])
    
     @staticmethod
-    def register_callbacks(app):
+    def register_callbacks(app, df):
         @app.callback(
             Output("main-plot", "figure"),
             [Input("main-plot", "relayoutData")]
@@ -113,10 +113,10 @@ class Task2:
             
             if relayoutData and 'xaxis.range[0]' in relayoutData and 'xaxis.range[1]' in relayoutData:
                 x_range = [relayoutData['xaxis.range[0]'], relayoutData['xaxis.range[1]']]
-                return Task2.create_stacked_histogram(x_range)
+                return Task2.create_stacked_histogram(df, x_range)
             else:
                 # This will be called initially and whenever the relayoutData does not contain x-axis range info
-                return Task2.create_stacked_histogram()
+                return Task2.create_stacked_histogram(df)
 
 
 # Additional code for Dash app initialization and running

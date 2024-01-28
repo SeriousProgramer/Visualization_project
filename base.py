@@ -30,14 +30,16 @@ TASKS = {
     'Understanding Credit Score': Task1(),
     'Understanding Income': Task2(),
 }
-
-df = pd.read_csv(
-    "C:\\Users\\20221498\\Desktop\\Visualization\\cleaned_data.csv",
-    delimiter=";",
-    on_bad_lines="skip",
-)
+df = pd.read_csv("C:\\Users\\yashs\\Downloads\\cleaned_data.csv")
+# df = pd.read_csv(
+#     #"C:\\Users\\20221498\\Desktop\\Visualization\\cleaned_data.csv",
+#     "C:\\Users\\yashs\\Downloads\\cleaned_data.csv",
+# #    "cleaned_data.csv",
+#     delimiter=";",
+#     on_bad_lines="skip",
+# )
 # Initialize the Dash app.
-app = dash.Dash(__name__, suppress_callback_exceptions=True)
+app = dash.Dash(__name__, suppress_callback_exceptions=True)#, allow_duplicate=True)
 
 # ... [rest of your app's code] ...
 
@@ -46,13 +48,13 @@ app.layout = html.Div([
     dcc.Dropdown(
         id='task-selector',
         options=[{'label': key, 'value': key} for key in TASKS.keys()],
-        value='Task 2'
+        value='Task 1'
     ),
     html.Div(id='task-content')  # Placeholder for the task layout
 ])
 
-Task1.register_callbacks(app, df)
-#Task2.register_callbacks(app)
+#Task1.register_callbacks(app, df)
+Task2.register_callbacks(app, df)
 
 @app.callback(
     Output('task-content', 'children'),
@@ -61,6 +63,7 @@ Task1.register_callbacks(app, df)
 def switch_task(selected_task):
     task = TASKS.get(selected_task)
     if task:
+        # task.register_callbacks(app, df)
         return task.layout(df)
     else:
         return "Please select a task"

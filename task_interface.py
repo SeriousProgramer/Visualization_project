@@ -6,6 +6,10 @@ class Task(ABC):
     @abstractmethod
     def layout(self, any):
         pass
+    
+    @abstractmethod
+    def register_callbacks(self, any):
+        pass
 
 # #Callback to update the plot area based on the selected task
 # @app.callback(

@@ -3,6 +3,20 @@ from dash import html, dcc
 from dash.dependencies import Output, Input
 import pandas as pd
 
+#
+TASKS = {
+    'Annual Income': 'Annual_Income',
+    'Number of delayed payments': 'Num_of_Delayed_Payment',
+    'Numebr of Loans' : 'Num_of_Loan' ,
+    'Outstanding Debt' : 'Outstanding_Debt',
+    'Credit Utilization Ratio' : 'Credit_Utilization_Ratio',
+    'Amount Invested monthly' : 'Amount_invested_monthly' ,
+    'Credit_History_Age' : 'Credit_History_Age'
+}
+
+#Annual Income, Num of Loan, Number of delayed payment, outstanding debt, credit utilization ratio
+#Amount_invested_monthly, Credit_History_Age
+
 class Task1:
     @staticmethod
     def layout(df):
@@ -12,7 +26,7 @@ class Task1:
                 html.Div([
                     dcc.Dropdown(
                     id='attribute-selector',
-                    options=[{'label': 'monies', 'value': 'Annual_Income'}, {'label' : 'Number of delayed payments', 'value': 'Num_of_Delayed_Payment'}],
+                    options=[{'label': key, 'value': key} for key in TASKS.keys()],
                     value='Num_of_Loan'),
                     dcc.Graph(id = 'main-plot', figure = Task1.create_box_plot(df, 'Num_of_Loan')),
                     html.Div(id = "left-panel")], style={'width': '60%', 'display': 'inline-block'}),
