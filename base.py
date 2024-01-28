@@ -32,7 +32,7 @@ TASKS = {
 }
 
 df = pd.read_csv(
-    "C:\\Users\\20221498\\Desktop\\Visualization\\cleaned_data.csv",
+    "cleaned_data.csv",
     delimiter=";",
     on_bad_lines="skip",
 )
