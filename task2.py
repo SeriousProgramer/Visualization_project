@@ -75,7 +75,7 @@ class Task2:
             barmode="stack",
             title="Stacked Histogram Example",
             yaxis=dict(title="Count"),
-            xaxis=dict(rangeslider=dict(visible=True), type='-', title='Monthly Income'),
+            xaxis=dict(rangeslider=dict(visible=True,range=[0,200]), type='linear', title='Monthly Income'),
 
             
         )
@@ -150,7 +150,23 @@ class Task2:
                 selected_credit_score = credit_score_mapping.get(credit_score, 'Poor')  # Default to 'Poor' if not found
                 return Task2.create_radar_chart(df, clicked_bin,selected_credit_score)
             return go.Figure()
-      
+            
+        @app.callback(
+    Output("main-plot", "figure"),
+    [Input("main-plot", "relayoutData"), Input("range-slider", "value")],
+    prevent_initial_call=True
+)
+        def update_histogram(relayoutData, range_slider_value):
+    # Your code here...
+            # Create a black figure
+            black_fig = go.Figure(layout=go.Layout(plot_bgcolor='black'))
 
+            if relayoutData is None:
+                # # Extract the range slider values
+                # x_range = [relayoutData['xaxis.range[0]'], relayoutData['xaxis.range[1]']]
+                # # Filter the DataFrame and update the histogram
+                # filtered_df = df[df["Monthly_Inhand_Salary"].between(x_range[0], x_range[1])]
+                return black_fig
+           
 # Additional code for Dash app initialization and running may go below this line
 # ...
