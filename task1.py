@@ -5,21 +5,21 @@ import pandas as pd
 
 #
 TASKS = {
-    'Annual Income': 'Annual_Income',
-    'Number of delayed payments': 'Num_of_Delayed_Payment',
-    'Numebr of Loans' : 'Num_of_Loan' ,
-    'Outstanding Debt' : 'Outstanding_Debt',
-    'Credit Utilization Ratio' : 'Credit_Utilization_Ratio',
-    'Amount Invested monthly' : 'Amount_invested_monthly' ,
+    'Annual_Income': 'Annual_Income',
+    'Num_of_Delayed_Payment': 'Num_of_Delayed_Payment',
+    'Num_of_Loan' : 'Num_of_Loan' ,
+    'Outstanding_Debt' : 'Outstanding_Debt',
+    'Credit_Utilization_Ratio' : 'Credit_Utilization_Ratio',
+    'Amount_invested_monthly' : 'Amount_invested_monthly' ,
     'Credit_History_Age' : 'Credit_History_Age'
-}
+    }
 
 #Annual Income, Num of Loan, Number of delayed payment, outstanding debt, credit utilization ratio
 #Amount_invested_monthly, Credit_History_Age
 
 class Task1:
-    @staticmethod
-    def layout(df):
+
+    def layout(self, df):
         # Example layout for Task 1
         return html.Div([
                 html.H3("Task 1 Visualization"),
@@ -78,8 +78,8 @@ class Task1:
         
 
 
-    @staticmethod
-    def register_callbacks(app, df):
+    
+    def register_callbacks(self, app, df):
         @app.callback(
             Output('main-plot', 'figure'),
             [Input('attribute-selector', 'value')]
