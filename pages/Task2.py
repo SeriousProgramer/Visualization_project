@@ -1,30 +1,19 @@
 # from sre_parse import State
-from dash import html, dcc
+from dash import html, dcc, callback
+import dash
 from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
 import numpy as np
 import pandas as pd
 
-class Task2:
+dash.register_page(__name__, path='/task2', name="Understanding Income")
 
-    @staticmethod
-    def layout(df):
-        return html.Div([
-            html.H3("Task 2 Visualization"),
-            html.Div([
-                dcc.Graph(
-                    id="main-plot",
-                    figure=Task2.create_stacked_histogram(df),
-                    config={"editable": True, "edits": {"axisTitleText": True}}
-                ),
-                html.Div(id="left-panel"),
-            ], style={"width": "60%", "display": "inline-block"}),
-            html.Div([
-                dcc.Graph(id="radar-chart")
-            ], style={"width": "40%", "display": "inline-block"})
-            
-        ])
+#########Loading Dataset##############
+df = pd.read_csv("cleaned_data.csv", delimiter=";", on_bad_lines="skip")
+######################################
 
+class support :
+    
     @staticmethod
     def create_stacked_histogram(df):
 
@@ -75,8 +64,8 @@ class Task2:
             barmode="stack",
             title="Stacked Histogram Example",
             yaxis=dict(title="Count"),
-            xaxis=dict(rangeslider=dict(visible=True,range=[0,200]), type='linear', title='Monthly Income'),
-
+            xaxis=dict(rangeslider=dict(visible=True), title='Monthly Income'),
+        #, type='-'
             
         )
         fig.update_layout(title_text="Time series with range slider and selectors")
@@ -132,15 +121,31 @@ class Task2:
 
         return fig
 
-    @staticmethod
-    def register_callbacks(app, df):
-       
+###################################################################3   
 
-        @app.callback(
+ 
+layout = html.Div([
+            html.H3("Task 2 Visualization"),
+            html.Div([
+                dcc.Graph(
+                    id="m-plot",
+                    figure=support.create_stacked_histogram(df),
+                    config={"editable": True, "edits": {"axisTitleText": True}}
+                ),
+                html.Div(id="left-panel"),
+            ], style={"width": "60%", "display": "inline-block"}),
+            html.Div([
+                dcc.Graph(id="radar-chart")
+            ], style={"width": "40%", "display": "inline-block"})
+            
+        ])
+
+   
+@callback(
             Output("radar-chart", "figure"),
-            [Input("main-plot", "clickData")]
+            [Input("m-plot", "clickData")]
         )
-        def display_radar_chart(clickData):
+def display_radar_chart(clickData):
             if clickData:
                 clicked_point = clickData['points'][0]
 
@@ -148,15 +153,15 @@ class Task2:
                 credit_score = clicked_point['curveNumber']
                 credit_score_mapping = {0: 'Poor', 1: 'Standard', 2: 'Good'}  # Update this mapping as per your traces
                 selected_credit_score = credit_score_mapping.get(credit_score, 'Poor')  # Default to 'Poor' if not found
-                return Task2.create_radar_chart(df, clicked_bin,selected_credit_score)
+                return support.create_radar_chart(df, clicked_bin,selected_credit_score)
             return go.Figure()
       
-        @app.callback(
-            Output('main-plot', 'figure'),
-            [Input('main-plot', 'relayoutData')],
-            [State('main-plot', 'figure')]
+@callback(
+            Output('m-plot', 'figure'),
+            [Input('m-plot', 'relayoutData')],
+            [State('m-plot', 'figure')]
         )
-        def update_y_axis_range(relayoutData, figure):
+def update_y_axis_range(relayoutData, figure):
             # Convert the figure JSON into a plotly Figure object
             fig = go.Figure(figure)
             if relayoutData and 'xaxis.range[0]' in relayoutData and 'xaxis.range[1]' in relayoutData:
@@ -185,12 +190,5 @@ class Task2:
 
       
 
-            if relayoutData is None:
-                # # Extract the range slider values
-                # x_range = [relayoutData['xaxis.range[0]'], relayoutData['xaxis.range[1]']]
-                # # Filter the DataFrame and update the histogram
-                # filtered_df = df[df["Monthly_Inhand_Salary"].between(x_range[0], x_range[1])]
-                return black_fig
-           
 # Additional code for Dash app initialization and running may go below this line
 # ...

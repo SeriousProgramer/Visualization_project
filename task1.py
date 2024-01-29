@@ -3,16 +3,30 @@ from dash import html, dcc
 from dash.dependencies import Output, Input
 import pandas as pd
 
+#
+TASKS = {
+    'Annual_Income': 'Annual_Income',
+    'Num_of_Delayed_Payment': 'Num_of_Delayed_Payment',
+    'Num_of_Loan' : 'Num_of_Loan' ,
+    'Outstanding_Debt' : 'Outstanding_Debt',
+    'Credit_Utilization_Ratio' : 'Credit_Utilization_Ratio',
+    'Amount_invested_monthly' : 'Amount_invested_monthly' ,
+    'Credit_History_Age' : 'Credit_History_Age'
+    }
+
+#Annual Income, Num of Loan, Number of delayed payment, outstanding debt, credit utilization ratio
+#Amount_invested_monthly, Credit_History_Age
+
 class Task1:
-    @staticmethod
-    def layout(df):
+
+    def layout(self, df):
         # Example layout for Task 1
         return html.Div([
                 html.H3("Task 1 Visualization"),
                 html.Div([
                     dcc.Dropdown(
                     id='attribute-selector',
-                    options=[{'label': 'monies', 'value': 'Annual_Income'}, {'label' : 'Number of delayed payments', 'value': 'Num_of_Delayed_Payment'}],
+                    options=[{'label': key, 'value': key} for key in TASKS.keys()],
                     value='Num_of_Loan'),
                     dcc.Graph(id = 'main-plot', figure = Task1.create_box_plot(df, 'Num_of_Loan')),
                     html.Div(id = "left-panel")], style={'width': '60%', 'display': 'inline-block'}),
@@ -64,8 +78,8 @@ class Task1:
         
 
 
-    @staticmethod
-    def register_callbacks(app, df):
+    
+    def register_callbacks(self, app, df):
         @app.callback(
             Output('main-plot', 'figure'),
             [Input('attribute-selector', 'value')]
