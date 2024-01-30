@@ -23,7 +23,9 @@ layout = html.Div([
     [Input('attribute-selector', 'value')]
 )
 def update_heatmap(selected_attribute):
-    heatmap_data = df[['Num_of_Loan', selected_attribute]]
+    heatmap_data=df #.groupby(by=['Customer_ID'])
+    heatmap_data = heatmap_data[['Num_of_Loan', selected_attribute]]
+    
     fig = px.density_heatmap(
         heatmap_data,
         x='Num_of_Loan',
@@ -41,18 +43,26 @@ def update_heatmap(selected_attribute):
 
 @callback(
     Output('scatter-plot-graph', 'figure'),
-    [Input('value')]
+    [Input('attribute-selector','value')]
 )
 
-def update_scatter_plot():
-    Q1 = df['Interest_Rate'].quantile(0.25)
-    Q3 = df['Interest_Rate'].quantile(0.75)
-    IQR = Q3 - Q1
+def update_scatter_plot(selected_attribute):
+    df_filtered = df.groupby(by=['Customer_ID'])
+    
+    # Q1 = df['Total_EMI_per_month'].quantile(0.25)
+    # Q3 = df['Total_EMI_per_month'].quantile(0.75)
+    # IQR = Q3 - Q1
+
+    # # Filtering Values between Q1-1.5IQR and Q3+1.5IQR
+    # df_filtered = df.query('(@Q1 - 1.5 * @IQR) <= Total_EMI_per_month <= (@Q3 + 1.5 * @IQR)')
+    # Q1 = df_filtered['Annual_Income'].quantile(0.25)
+    # Q3 = df_filtered['Annual_Income'].quantile(0.75)
+    # IQR = Q3 - Q1
 
     # Filtering Values between Q1-1.5IQR and Q3+1.5IQR
-    df_filtered = df.query('(@Q1 - 1.5 * @IQR) <= Interest_Rate <= (@Q3 + 1.5 * @IQR)')
-
-    fig = px.scatter(df_filtered, x='Age', y='Interest_Rate')
+    # df_filtered = df_filtered.query('(@Q1 - 1.5 * @IQR) <= Annual_Income <= (@Q3 + 1.5 * @IQR)')
+    
+    fig =   px.scatter(df_filtered, y='Total_EMI_per_month', x='Annual_Income', size='Outstanding_Debt', color='Credit_Score', hover_data=['Total_EMI_per_month', 'Annual_Income', 'Outstanding_Debt', 'Credit_Score'])
 
     return fig
 
