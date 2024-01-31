@@ -75,7 +75,7 @@ class Task2:
             barmode="stack",
             title="Stacked Histogram Example",
             yaxis=dict(title="Count"),
-            xaxis=dict(rangeslider=dict(visible=True), type='-', title='Monthly Income'),
+            xaxis=dict(rangeslider=dict(visible=True,range=[0,200]), type='linear', title='Monthly Income'),
 
             
         )
@@ -185,5 +185,12 @@ class Task2:
 
       
 
+            if relayoutData is None:
+                # # Extract the range slider values
+                # x_range = [relayoutData['xaxis.range[0]'], relayoutData['xaxis.range[1]']]
+                # # Filter the DataFrame and update the histogram
+                # filtered_df = df[df["Monthly_Inhand_Salary"].between(x_range[0], x_range[1])]
+                return black_fig
+           
 # Additional code for Dash app initialization and running may go below this line
 # ...

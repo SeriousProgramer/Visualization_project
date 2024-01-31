@@ -100,22 +100,27 @@ def update_heatmap(selected_attribute):
 
 def update_scatter_plot(selected_attribute):
     df_filtered = df.groupby(by=['Customer_ID'])
-    # Q1 = df['Total_EMI_per_month'].quantile(0.25)
-    # Q3 = df['Total_EMI_per_month'].quantile(0.75)
-    # IQR = Q3 - Q1
-
-    # # Filtering Values between Q1-1.5IQR and Q3+1.5IQR
-    # df_filtered = df.query('(@Q1 - 1.5 * @IQR) <= Total_EMI_per_month <= (@Q3 + 1.5 * @IQR)')
-    # Q1 = df_filtered['Annual_Income'].quantile(0.25)
-    # Q3 = df_filtered['Annual_Income'].quantile(0.75)
-    # IQR = Q3 - Q1
-
-    # Filtering Values between Q1-1.5IQR and Q3+1.5IQR
-    # df_filtered = df_filtered.query('(@Q1 - 1.5 * @IQR) <= Annual_Income <= (@Q3 + 1.5 * @IQR)')
    
-    fig = go.Scatter(
-        x = df_filtered['Annual_Income'].apply(pd.Series.mode).tolist(),
-        y = df_filtered['Total_EMI_per_month'].apply(pd.Series.mode).tolist())
+    xx = df_filtered['Annual_Income'].apply(pd.Series.mode)
+    yy = df_filtered['Total_EMI_per_month'].apply(pd.Series.mode)
+    credit_scores = df_filtered['Credit_Score'].apply(pd.Series.mode)
+    out_debt = df_filtered['Outstanding_Debt'].apply(pd.Series.mode)
+
+    my_dict = {
+        'Poor': 'orange',
+        'Standard': 'blue',
+        'Good': 'violet'
+    }
+
+    # Apply the color mapping to the list of credit scores
+    color_mapped = list(map(my_dict.get, credit_scores))
+
+    fig = go.Figure(
+        data=[
+            go.Scatter(x=xx, y=yy, mode="markers", marker=dict(color=color_mapped, size=out_debt/100)),
+        ],
+        layout=go.Layout(title="Your Chart Title")
+    )
     return fig
 
 # Additional callback for scatter plot graph if needed
