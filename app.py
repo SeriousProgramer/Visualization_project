@@ -1,12 +1,16 @@
 from dash import Dash, html, dcc
 import dash
 import plotly.express as px
+import dash_bootstrap_components as dbc
+from dash_bootstrap_templates import load_figure_template
 
-px.defaults.template = "ggplot2"
+load_figure_template('CYBORG')
 
-external_css = ["https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css", ]
+#px.defaults.template = "ggplot2"
 
-app = Dash(__name__, pages_folder='pages', use_pages=True, external_stylesheets=external_css)
+#external_css = ["https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css", ]
+
+app = Dash(__name__, pages_folder='pages', use_pages=True, external_stylesheets=[dbc.themes.CYBORG])
 
 app.layout = html.Div([
 	html.Br(),

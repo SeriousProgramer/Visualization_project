@@ -1,3 +1,4 @@
+from tarfile import FilterError
 import dash
 from dash import dcc, html, callback
 from dash.dependencies import Input, Output
@@ -5,6 +6,7 @@ import plotly.graph_objs as go
 import pandas as pd
 
 dash.register_page(__name__, path='/task5', name="Occupation")
+
 
 # # Replace with your actual dataframe
 # df = pd.DataFrame({
@@ -16,16 +18,29 @@ dash.register_page(__name__, path='/task5', name="Occupation")
 
 df = pd.read_csv("cleaned_data.csv", delimiter=";", on_bad_lines="skip")
 
-# Filter out null or empty strings and a specific placeholder from the Occupation column.  _______
+#cleaned = df.dropna()
+
+# Filter out null or empty strings and a specific placeholder from the Occupation column.  _______ and df['Occupation'].notnull
+
+def filter_outliers(df, column):
+    Q1 = df[column].quantile(0.25)
+    Q3 = df[column].quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    return df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
+
+
+
 dfg = df[df['Occupation'].notnull()]
-dff = dfg[dfg['Occupation'].str.isalnum()]['Occupation'].unique()
+dff = dfg[dfg['Occupation'].str.isalnum()]
 
 layout = html.Div([
     html.H1("Occupation Data Analysis"),
     dcc.Checklist(
         id='occupation-selector',
-        options=[{'label': i, 'value': i} for i in (dff)],
-        value=df['Occupation'].unique().tolist(),  # Default all selected
+        options=[{'label': i, 'value': i} for i in (dff['Occupation'].unique().tolist())],
+        value=['Engineer', 'Entrepreneur'],  # Default selected
         labelStyle={'display': 'block'}
     ),
     dcc.Graph(id='debt-graph'),
@@ -40,39 +55,59 @@ layout = html.Div([
 def update_graph(selected_occupations):
     debt_traces = []
     income_traces = []
+    
     for occupation in selected_occupations:
-        filtered_df = df[df['Occupation'] == occupation]
+        # Filter the dataframe for the selected occupation and valid ages
+        occupation_df = dff[(dff['Occupation'] == occupation) & (dff['Age'] > 0) & (dff['Age'] < 100)]
+        
+        occupation_df = filter_outliers(occupation_df, 'Annual_Income')
+        
+        # Group by age and calculate mean debt and median income
+        age_group = occupation_df.groupby('Age').agg({'Outstanding_Debt':'mean', 'Annual_Income':'median'}).reset_index()
+        
+        # Append the traces for plotting
         debt_traces.append(
             go.Scatter(
-                x=filtered_df['Age'],
-                y=filtered_df['Outstanding_Debt'],
+                x=age_group['Age'],
+                y=age_group['Outstanding_Debt'],
                 mode='lines+markers',
                 name=occupation
             )
         )
         income_traces.append(
             go.Scatter(
-                x=filtered_df['Age'],
-                y=filtered_df['Annual_Income'],
+                x=age_group['Age'],
+                y=age_group['Annual_Income'],
                 mode='lines+markers',
                 name=occupation
             )
         )
-    debt_fig = {
-        'data': debt_traces,
-        'layout': go.Layout(
+    
+    # Define the layout for the debt graph
+    debt_fig = go.Figure(
+        data=debt_traces,
+        layout=go.Layout(
             title='Debt vs Age by Occupation',
             xaxis={'title': 'Age'},
-            yaxis={'title': 'Debt'}
+            yaxis={'title': 'Debt'},
+            template='plotly_dark'
         )
-    }
-    income_fig = {
-        'data': income_traces,
-        'layout': go.Layout(
+    )
+    
+    # Define the layout for the income graph
+    income_fig = go.Figure(
+        data=income_traces,
+        layout=go.Layout(
             title='Income vs Age by Occupation',
             xaxis={'title': 'Age'},
-            yaxis={'title': 'Income'}
+            yaxis={'title': 'Income'},
+            template='plotly_dark'
         )
-    }
+    )
+    
     return debt_fig, income_fig
+
+
+
+
 

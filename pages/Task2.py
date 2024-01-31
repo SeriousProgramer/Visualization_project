@@ -65,6 +65,8 @@ class support :
             title="Stacked Histogram Example",
             yaxis=dict(title="Count"),
             xaxis=dict(rangeslider=dict(visible=True), title='Monthly Income'),
+            template='plotly_dark'
+
         #, type='-'
             
         )
@@ -116,7 +118,9 @@ class support :
                     visible=True,
                     range=[0, 200]
                 )),
-            showlegend=False
+            showlegend=False,
+            template='plotly_dark'
+
         )
 
         return fig
