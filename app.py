@@ -20,7 +20,7 @@ app.layout = html.Div([
 			  for page in dash.page_registry.values()]
 	),
 	dash.page_container
-], className="col-8 mx-auto")
+], className="col-11 mx-auto")
 
 if __name__ == '__main__':
 	app.run(debug=True)
