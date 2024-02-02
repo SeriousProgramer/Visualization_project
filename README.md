@@ -1,5 +1,10 @@
 # Visualization_project
-Visualization project for course JBI100
+Visualization project for course JBI100 by Group 42
+Authors: 
+Rohit Binu 1833413
+Preksha Shubham 1837680
+Yash Dandriyal 1818953
+Madoc Karthaus 1782045
 
 ## Overview
 This project is part of the JBI100 course, focusing on data visualization techniques using Python's Dash and Plotly libraries. The project comprises several interactive web pages that allow users to explore and analyze various aspects of financial data, including credit scores, loans, debts, and occupation-related statistics.
