@@ -33,9 +33,9 @@ class support :
         fig.add_trace(
             go.Histogram(
                 x=poor_df["Monthly_Inhand_Salary"],
-                name="Monthly_Inhand_Salary",
                 marker_color="indianred",
                 opacity=0.75,
+                name = "Poor",
                 cliponaxis=False
             )
         )
@@ -45,9 +45,9 @@ class support :
         fig.add_trace(
             go.Histogram(
                 x=standard_df["Monthly_Inhand_Salary"],
-                name="Monthly_Inhand_Salary",
                 marker_color="lightsalmon",
                 opacity=0.75,
+                name ="Standard",
                 cliponaxis=False
             )
         )
@@ -58,8 +58,8 @@ class support :
         fig.add_trace(
             go.Histogram(
                 x=good_df["Monthly_Inhand_Salary"],
-                name="Monthly_Inhand_Salary",
                 marker_color="gray",
+                name = "Good",
                 opacity=0.75,
                 cliponaxis=False
             )
@@ -71,10 +71,11 @@ class support :
             title="Stacked Histogram Example",
             yaxis=dict(title="Count", fixedrange=False, autorange = True,),
             xaxis=dict(title='Monthly Income'),
+            legend=dict(title="Credit Score"),
         #, type='-'
             
         )
-        fig.update_layout(title_text="Time series with range slider and selectors")
+        fig.update_layout(title_text="Stacked histogram with range slider and selectors")
         
 
         return fig
@@ -108,6 +109,7 @@ class support :
             fig.add_trace(go.Scatterpolar(
             r=percent_medians[categories].tolist(),
             theta=categories,
+            name = "",
             fill='toself',
             marker = dict(color = 'blue')
         ))
@@ -126,7 +128,9 @@ class support :
             r=percent_medians[categories].tolist(),
             theta=categories,
             fill='toself',
-            marker = dict(color = 'orange')
+            marker = dict(color = 'orange'),
+            name = ""
+
         ))
 
         fig.update_layout(
@@ -146,7 +150,7 @@ def increment(dfs):
      df1 = dfs
  
 layout = html.Div([
-            html.H3("Task 2 Visualization"),
+            html.H3("understanding Income"),
             html.Div([
                 dcc.Graph(
                     id="m-plot",
