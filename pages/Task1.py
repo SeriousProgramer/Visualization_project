@@ -43,18 +43,24 @@ class com:
 
 
     @staticmethod
-    def kde_plot(df, attribute) :
-        var = [df[attribute].dropna()]  # Make sure to drop NA values for the plot
-        fig = ff.create_distplot(var, [attribute], show_hist=False, colors=['Orange'])
+    def kde_plot(df, attribute):
         
-        # Update layout for aesthetics
+        df_filtered = (df.dropna()).groupby(by=['Customer_ID'])
+    
+        df_mode = list(df_filtered[attribute].apply(pd.Series.mode))
+        
+        var = [df_mode]
+        
+        fig = ff.create_distplot(var, [attribute], show_hist=False, colors=['Orange'])
+        # Update layout for aesthetics and set the x-axis range
         fig.update_layout(
-            title='KDE of Number of Loans',
-            xaxis_title='Number of Loans',
+            title='KDE of ' + attribute,
+            xaxis_title=attribute,
             yaxis_title='Density'
         )
         
         return fig
+
     
     @staticmethod
     def text_box(attribute):
@@ -112,30 +118,28 @@ class com:
 
 
 TASKS = {
+    'Num_of_Loan' : 'Num_of_Loan' ,
     'Annual_Income': 'Annual_Income',
     'Num_of_Delayed_Payment': 'Num_of_Delayed_Payment',
-    'Num_of_Loan' : 'Num_of_Loan' ,
     'Outstanding_Debt' : 'Outstanding_Debt',
     'Credit_Utilization_Ratio' : 'Credit_Utilization_Ratio',
     'Amount_invested_monthly' : 'Amount_invested_monthly' ,
     'Interest_Rate' : 'Interest_Rate'
     }
 
-#Annual Income, Num of Loan, Number of delayed payment, outstanding debt, credit utilization ratio
-#Amount_invested_monthly, Credit_History_Age
 
 
 
 
 layout = html.Div([
-                html.H3("Task 1 Visualization"),
                 dcc.Dropdown(
                     id='attribute-selector',
                     options=[{'label': key, 'value': key} for key in TASKS.keys()],
                     style={
                             'backgroundColor': 'rgba(255, 255, 255, 0.5)',  # Semi-transparent white
                             'color': 'black',
-                            'border': '1px solid #ddd'  # Light gray border
+                            'border': '1px solid #ddd' , # Light gray border
+                            'fontWeight': 'bold'                      
                         },
                     value='Num_of_Loan'),
                 html.Div([
@@ -146,15 +150,15 @@ layout = html.Div([
                         html.Div(
                            "The number of loans taken from the bank",style={
                                         'textAlign': 'center',
-                                        'color': '#0074D9',
+                                        'color': 'black',
                                         'fontSize': 24,
                                         'margin': 'auto',
                                         'padding': '20px',
                                         'fontWeight': 'bold',
                                         'border': '1px solid #ddd',
                                         'borderRadius': '8px',
-                                        'width': '50%',
-                                        'backgroundColor': '#f9f9f9'
+                                        'width': '75%',
+                                        'backgroundColor': 'rgba(255, 255, 255, 0.5)',
                                     },id='text-box'
                             ),
                         html.Div([

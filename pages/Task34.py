@@ -14,9 +14,8 @@ dash.register_page(__name__, path='/task34', name="Loans and Debts")
 df = pd.read_csv("cleaned_data.csv", delimiter=";", on_bad_lines="skip")
 
 TASKS = {
-    'Annual_Income': 'Annual_Income',
     'Num_of_Delayed_Payment': 'Num_of_Delayed_Payment',
-    
+    'Annual_Income': 'Annual_Income',
     'Outstanding_Debt' : 'Outstanding_Debt',
     'Credit_Utilization_Ratio' : 'Credit_Utilization_Ratio',
     'Amount_invested_monthly' : 'Amount_invested_monthly' ,
@@ -31,9 +30,10 @@ layout = html.Div([
                     style={
                             'backgroundColor': 'rgba(255, 255, 255, 0.5)',  # Semi-transparent white
                             'color': 'black',
-                            'border': '1px solid #ddd'  # Light gray border
+                            'border': '1px solid #ddd' , # Light gray border
+                            'fontWeight': 'bold'
                         },
-                    value='Annual_Income'),
+                    value='Num_of_Delayed_Payment'),
             ]),
     dcc.Graph(id='heatmap-graph'),  # Graph placed at the top
     dcc.Graph(id='scatter-plot-graph')  # Additional scatter plot graph
@@ -74,25 +74,6 @@ def update_heatmap(selected_attribute):
 
     return fig
 
-# @callback(
-#     Output('kde-plot', 'figure'),
-#     Input('attribute-selector', 'value')  # This input is just to trigger the callback
-# )
-# def update_kde_plot(selected_attribute):
-#     # Create a KDE plot
-#     fig = px.density_contour(
-#         df, x='Num_of_Loan', y=selected_attribute, 
-#         marginal_x='histogram', marginal_y='histogram'
-#     )
-    
-#     # Update layout for aesthetics
-#     fig.update_layout(
-#         title='KDE of Number of Loans and Monthly Balance',
-#         xaxis_title='Number of Loans',
-#         yaxis_title=selected_attribute,
-#     )
-    
-#     return fig
 
 @callback(
     Output('scatter-plot-graph', 'figure'),
@@ -146,11 +127,11 @@ def update_scatter_plot(selected_attribute):
         )
     )
 
-    # Customize layout for better interaction
+   
     fig.update_layout(
-        hovermode='closest',  # Shows tooltips for the closest points
-        margin=dict(l=40, r=40, t=40, b=40)  # Adjust margins if needed
+        hovermode='closest',
+        margin=dict(l=40, r=40, t=40, b=40)  # Adjusting margins 
     )
 
     return fig
-# Additional callback for scatter plot graph if needed
+

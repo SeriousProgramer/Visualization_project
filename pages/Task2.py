@@ -7,7 +7,7 @@ import plotly.graph_objs as go
 import numpy as np
 import pandas as pd
 
-dash.register_page(__name__, path='/task2', name="Understanding Income")
+dash.register_page(__name__, path='/task2', name="Why Income Matters")
 
 #########Loading Dataset##############
 df = pd.read_csv("cleaned_data.csv", delimiter=";", on_bad_lines="skip")
@@ -150,7 +150,7 @@ def increment(dfs):
      df1 = dfs
  
 layout = html.Div([
-            html.H3("understanding Income"),
+            html.H3("Understanding Income"),
             html.Div([
                 dcc.Graph(
                     id="m-plot",

@@ -6,21 +6,7 @@ import plotly.graph_objs as go
 import pandas as pd
 
 dash.register_page(__name__, path='/task5', name="Occupation")
-
-
-# # Replace with your actual dataframe
-# df = pd.DataFrame({
-#     'Occupation': ['Doctor', 'Actress', 'Doctor', 'Actress'],
-#     'Age': [25, 25, 26, 26],
-#     'Debt': [20000, 15000, 21000, 16000],
-#     'Income': [5000, 3000, 5200, 3200]
-# })
-
 df = pd.read_csv("cleaned_data.csv", delimiter=";", on_bad_lines="skip")
-
-#cleaned = df.dropna()
-
-# Filter out null or empty strings and a specific placeholder from the Occupation column.  _______ and df['Occupation'].notnull
 
 def filter_outliers(df, column):
     Q1 = df[column].quantile(0.25)
@@ -37,15 +23,18 @@ dff = dfg[dfg['Occupation'].str.isalnum()]
 
 layout = html.Div([
     html.H1("Occupation Data Analysis"),
-    dcc.Checklist(
-        id='occupation-selector',
-        options=[{'label': i, 'value': i} for i in (dff['Occupation'].unique().tolist())],
-        value=['Engineer', 'Entrepreneur'],  # Default selected
-        labelStyle={'display': 'block'}
-    ),
-    dcc.Graph(id='debt-graph'),
-    dcc.Graph(id='income-graph'),
-])
+    html.Div([
+                dcc.Graph(id='debt-graph'),
+                dcc.Graph(id='income-graph'),
+                html.Div(id = "left-panel")], style={'width': '85%', 'display': 'inline-block','padding': '0px'} ),
+    html.Div([
+                dcc.Checklist(
+                    id='occupation-selector',
+                    options=[{'label': i, 'value': i} for i in (dff['Occupation'].unique().tolist())],
+                    value=['Engineer', 'Entrepreneur'],  # Default selected
+                    labelStyle={'display': 'block', 'fontWeight': 'bold'}
+                ),html.Div(id='right-panel')],style={'width': '15%', 'display': 'inline-block', 'vertical-align': 'top','padding': '0px'} )
+     ])
 
 @callback(
     [Output('debt-graph', 'figure'),
