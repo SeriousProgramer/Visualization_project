@@ -86,7 +86,7 @@ def update_scatter_plot(selected_attribute):
     df_filtered = df.groupby(by=['Customer_ID'])
 
     xx = df_filtered['Annual_Income'].apply(lambda x: x.mode().iloc[0] if not x.mode().empty else 0)
-    yy = df_filtered['Credit_Utilization_Ratio'].apply(lambda x: x.mode().iloc[0] if not x.mode().empty else 0)
+    yy = df_filtered['Total_EMI_per_month'].apply(lambda x: x.mode().iloc[0] if not x.mode().empty else 0)
     credit_scores = df_filtered['Credit_Score'].apply(lambda x: x.mode().iloc[0] if not x.mode().empty else 'Unknown')
     out_debt = df_filtered['Outstanding_Debt'].apply(lambda x: x.mode().iloc[0] if not x.mode().empty else 0)
 
@@ -126,7 +126,7 @@ def update_scatter_plot(selected_attribute):
         mode="markers",
         marker=dict(
             color=color_mapped,
-            size=[math.pow(x, 0.4) for x in out_debt],
+            size=[math.pow(x, 0.35) for x in out_debt],
             opacity=0.7
         ),
         name='A larger size indicates a higher outstanding debt',
@@ -134,9 +134,9 @@ def update_scatter_plot(selected_attribute):
 
     # Customize layout
     fig.update_layout(
-        title="Scater Plot of Annual Income and Credit Utilization Ratio",
+        title="Scater Plot of Annual Income and EMI per month",
         xaxis_title="Annual Income",
-        yaxis_title="Credit Utilization Ratio",
+        yaxis_title="EMI Per Month",
         hovermode='closest',
         margin=dict(l=40, r=40, t=40, b=40),
         showlegend=True
