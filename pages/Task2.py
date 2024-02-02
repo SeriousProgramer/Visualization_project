@@ -21,11 +21,11 @@ class support :
     def create_stacked_histogram(df):
 
         # Remove rows where 'Monthly_Inhand_Salary' is NaN or infinite
-
+        
        
     
        
-
+        decrement()
         fig = go.FigureWidget()
 
         poor_df = df[df["Credit_Score"] == "Poor"]
@@ -148,6 +148,10 @@ class support :
 def increment(dfs):
      global df1
      df1 = dfs
+     
+def decrement():
+    global df1
+    df1 = None
  
 layout = html.Div([
             html.H3("Understanding Income"),
