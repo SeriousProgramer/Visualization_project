@@ -55,6 +55,9 @@ from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objs as go
+import plotly.figure_factory as ff
+import numpy as np
+
 
 dash.register_page(__name__, path='/task34', name="Heatmap")
 
@@ -95,20 +98,17 @@ layout = html.Div([
 
 @callback(
     Output('kde-plot', 'figure'),
-    Input('attribute-selector', 'value')  # This input is just to trigger the callback
+    Input('attribute-selector', 'value')
 )
 def update_kde_plot(selected_attribute):
-    # Create a KDE plot
-    fig = px.density_contour(
-        df, x='Num_of_Loan', y=selected_attribute, 
-        marginal_x='histogram', marginal_y='histogram'
-    )
+    var = [df['Num_of_Loan'].dropna()]  # Make sure to drop NA values for the plot
+    fig = ff.create_distplot(var, ['Num_of_Loan'], show_hist=False, colors=['Orange'])
     
     # Update layout for aesthetics
     fig.update_layout(
-        title='KDE of Number of Loans and Monthly Balance',
+        title='KDE of Number of Loans',
         xaxis_title='Number of Loans',
-        yaxis_title=selected_attribute,
+        yaxis_title='Density'
     )
     
     return fig
