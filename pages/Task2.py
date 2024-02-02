@@ -33,7 +33,7 @@ class support :
         fig.add_trace(
             go.Histogram(
                 x=poor_df["Monthly_Inhand_Salary"],
-                marker_color="indianred",
+                marker_color="lightsalmon",
                 opacity=0.75,
                 name = "Poor",
                 cliponaxis=False
@@ -45,7 +45,7 @@ class support :
         fig.add_trace(
             go.Histogram(
                 x=standard_df["Monthly_Inhand_Salary"],
-                marker_color="lightsalmon",
+                marker_color="gray",
                 opacity=0.75,
                 name ="Standard",
                 cliponaxis=False
@@ -58,7 +58,7 @@ class support :
         fig.add_trace(
             go.Histogram(
                 x=good_df["Monthly_Inhand_Salary"],
-                marker_color="gray",
+                marker_color="lightblue",
                 name = "Good",
                 opacity=0.75,
                 cliponaxis=False
@@ -139,7 +139,7 @@ class support :
                     visible=True,
                     range=[0, 200]
                 )),
-            showlegend=True
+            showlegend=False
         )
 
         return fig
