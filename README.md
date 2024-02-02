@@ -15,6 +15,7 @@ To run the project, you will need to install the following Python libraries:
 - Plotly
 - Pandas
 - NumPy
+- SciPy
 
 You can install these packages using pip.
 
