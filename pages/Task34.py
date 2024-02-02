@@ -72,13 +72,14 @@ TASKS = {
 
 
 layout = html.Div([
-    dcc.Graph(id='heatmap-graph'),  # Graph placed at the top
-    html.Div([
+     html.Div([
                     dcc.Dropdown(
                     id='attribute-selector',
                     options=[{'label': key, 'value': key} for key in TASKS.keys()],
                     value='Annual_Income'),
 ]),
+    dcc.Graph(id='heatmap-graph'),  # Graph placed at the top
+   
     dcc.Graph(id='scatter-plot-graph')  # Additional scatter plot graph
 ])
 
@@ -143,56 +144,65 @@ def update_heatmap(selected_attribute):
 )
 
 def update_scatter_plot(selected_attribute):
+    
+
     df_filtered = df.groupby(by=['Customer_ID'])
-   
-    xx = df_filtered['Annual_Income'].apply(pd.Series.mode)
-    yy = df_filtered['Credit_Utilization_Ratio'].apply(pd.Series.mode)
-    credit_scores = df_filtered['Credit_Score'].apply(pd.Series.mode)
-    out_debt = df_filtered['Outstanding_Debt'].apply(pd.Series.mode)
 
-    # Normalize outstanding debt for marker intensity
-    max_debt = max(out_debt)
-    min_debt = min(out_debt)
-    # Create a normalized luminance factor where higher debt corresponds to higher luminance
-    luminance_factor = [(x - min_debt) / (max_debt - min_debt) for x in out_debt]
-    # Use the luminance factor to adjust the opacity, can be between 0.5 (more transparent) and 1 (fully opaque)
-    opacities = [0.2 + (lum * 0.3) for lum in luminance_factor]
+    xx = df_filtered['Annual_Income'].apply(lambda x: x.mode().iloc[0] if not x.mode().empty else 0)
+    yy = df_filtered['Credit_Utilization_Ratio'].apply(lambda x: x.mode().iloc[0] if not x.mode().empty else 0)
+    credit_scores = df_filtered['Credit_Score'].apply(lambda x: x.mode().iloc[0] if not x.mode().empty else 'Unknown')
+    out_debt = df_filtered['Outstanding_Debt'].apply(lambda x: x.mode().iloc[0] if not x.mode().empty else 0)
 
-    my_dict = {
+    credit_score_colors = {
         'Poor': 'orange',
         'Standard': 'grey',
-        'Good': 'blue'
+        'Good': 'blue',
+        
+        
+        
     }
 
-    # Apply the color mapping to the list of credit scores
-    color_mapped = list(map(my_dict.get, credit_scores))
+    # Map credit scores to colors
+    color_mapped = list(map(credit_score_colors.get, credit_scores))
 
-    fig = go.Figure(
-        data=[
-            go.Scatter(
-                x=xx,
-                y=yy,
-                mode="markers",
-                marker=dict(
-                    color=color_mapped,
-                    # Adjust opacity for luminance effect
-                    opacity = opacities,
-                    size = [math.pow(x, 0.4) for x in out_debt]                    
-                    #brightness=[math.pow(x, 0.4) for x in out_debt]  # Use size to further emphasize the effect
-                )
-            )
-        ],
-        layout=go.Layout(
-            title="Your Chart Title",
-            xaxis_title="Annual Income",
-            yaxis_title="Total EMI per Month"
-        )
-    )
+    fig = go.Figure()
 
-    # Customize layout for better interaction
+    
+    
+    
+
+    # Add dummy traces for the legend
+    count =0
+    for score, color in credit_score_colors.items():
+        count+=1
+        fig.add_trace(go.Scatter(
+            x=[None],
+            y=[None],
+            mode='markers',
+            marker=dict(color=color, size=10),
+            name=score
+        ))
+    # Add the actual scatter plot data
+    fig.add_trace(go.Scatter(
+        x=xx,
+        y=yy,
+        mode="markers",
+        marker=dict(
+            color=color_mapped,
+            size=[math.pow(x, 0.4) for x in out_debt],
+            opacity=0.7
+        ),
+        name='A larger size indicates a higher outstanding debt',
+    ))
+
+    # Customize layout
     fig.update_layout(
-        hovermode='closest',  # Shows tooltips for the closest points
-        margin=dict(l=40, r=40, t=40, b=40)  # Adjust margins if needed
+        title="Scater Plot of Annual Income and Credit Utilization Ratio",
+        xaxis_title="Annual Income",
+        yaxis_title="Credit Utilization Ratio",
+        hovermode='closest',
+        margin=dict(l=40, r=40, t=40, b=40),
+        showlegend=True
     )
 
     return fig
